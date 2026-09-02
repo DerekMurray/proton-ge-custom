@@ -16,6 +16,8 @@ Base revisions:
 - Direct2D Tint registration and LMU bitmap fallback.
 - Direct2D Tint colour application for status artwork.
 - Bitmap-target SpriteBatch execution, including colour and alpha.
+- Bitmap-target SpriteBatch fixes: preserve the device-context transform and
+  apply each sprite's RGBA colour exactly once.
 - Bitmap-target layers.
 - Clip state owned by each bitmap target.
 - Layer compositor bounds correction.
