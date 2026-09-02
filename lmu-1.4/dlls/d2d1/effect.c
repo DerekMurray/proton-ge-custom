@@ -1362,9 +1362,29 @@ L"<?xml version='1.0'?>                                                   \
     <Property name='ClampOutput' type='bool'/>                            \
   </Effect>";
 
+struct tint_properties
+{
+    D2D_VECTOR_4F color;
+    BOOL clamp_output;
+};
+
+EFFECT_PROPERTY_RW(tint, color, VECTOR4)
+EFFECT_PROPERTY_RW(tint, clamp_output, BOOL)
+
+static const D2D1_PROPERTY_BINDING tint_bindings[] =
+{
+    { L"Color", BINDING_RW(tint, color) },
+    { L"ClampOutput", BINDING_RW(tint, clamp_output) },
+};
+
 static HRESULT __stdcall tint_factory(IUnknown **effect)
 {
-    return d2d_effect_create_impl(effect, NULL, 0);
+    static const struct tint_properties properties =
+    {
+        .color = { 1.0f, 1.0f, 1.0f, 1.0f },
+        .clamp_output = FALSE,
+    };
+    return d2d_effect_create_impl(effect, &properties, sizeof(properties));
 }
 
 static const WCHAR color_matrix_description[] =
@@ -1843,7 +1863,7 @@ void d2d_effects_init_builtins(struct d2d_factory *factory)
         { &CLSID_D2D1Crop, X2(crop) },
         { &CLSID_D2D1Shadow, X2(shadow) },
         { &CLSID_D2D1Grayscale, X(grayscale) },
-        { &CLSID_D2D1Tint, X(tint) },
+        { &CLSID_D2D1Tint, X2(tint) },
         { &CLSID_D2D1ColorMatrix, X2(color_matrix) },
         { &CLSID_D2D1Flood, X2(flood) },
         { &CLSID_D2D1GaussianBlur, X2(gaussian_blur) },

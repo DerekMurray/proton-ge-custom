@@ -30,16 +30,15 @@ Base revisions:
 ## Validation status
 
 - Offline driving and RaceControl online sessions are validated in non-VR LMU.
-- The main HUD and MFD render correctly. The animated colour fill in the race
-  start and pit-release progress bars is still missing and under investigation;
-  the surrounding panel and countdown text render.
+- The HUD and MFD render correctly, including the animated colour fill in the
+  race-start and pit-release progress bars.
 - The CUR/VR workaround is included at the user's request but is **untested
   locally** because no VR headset is available. No claim of working VR support
   is made.
 - Both 64-bit and 32-bit `d3dx9_36.dll` targets compile successfully with
   warnings treated as errors. Runtime cursor/VR behaviour remains untested.
-- The release is experimental and intended to make the working GE-Proton11-6
-  baseline available for wider testing while that progress-bar issue is tracked.
+- The assembled compatibility tool passes non-VR Tint and HUD regression
+  testing.
 
 ## Layout
 
