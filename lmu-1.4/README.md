@@ -19,9 +19,11 @@ Base revisions:
 - Bitmap-target layers.
 - Clip state owned by each bitmap target.
 - Layer compositor bounds correction.
-- The existing CUR-file workaround from JacKeTUs Wine commit
-  `1e2c9c29611850c1887430ad7b65a1a3287dc7fc`, retained as
-  `patches/lmu-vr-cursor.patch` with its original authorship metadata.
+- The CUR-file workaround from JacKeTUs Wine commit
+  `1e2c9c29611850c1887430ad7b65a1a3287dc7fc`, forward-ported to the
+  GE-Proton11-6 Wine source as `patches/lmu-vr-cursor.patch`. The original
+  upstream patch and authorship metadata are retained separately as
+  `patches/lmu-vr-cursor-original.patch`.
 
 ## Validation status
 
@@ -32,15 +34,19 @@ Base revisions:
 - The CUR/VR workaround is included at the user's request but is **untested
   locally** because no VR headset is available. No claim of working VR support
   is made.
-- A final binary release must be rebuilt with all patches together and pass a
-  non-VR regression test before publication.
+- Both 64-bit and 32-bit `d3dx9_36.dll` targets compile successfully with
+  warnings treated as errors. Runtime cursor/VR behaviour remains untested.
+- The assembled binary is ready for non-VR Tint and regression testing before
+  the draft release is published.
 
 ## Layout
 
 - `dlls/d2d1/`: exact replacement source files for the prepared GE-Proton11-6
   Wine tree.
 - `patches/lmu-bcrypt-secret-append.patch`: bcrypt patch.
-- `patches/lmu-vr-cursor.patch`: original CUR/VR workaround patch.
+- `patches/lmu-vr-cursor.patch`: GE-Proton11-6 forward-port of the CUR/VR
+  workaround.
+- `patches/lmu-vr-cursor-original.patch`: unmodified original workaround.
 
 This branch deliberately excludes the older HID, DirectInput GUID and
 `IDirectInput7::FindDevice` changes because Proton 11 already supplies the
