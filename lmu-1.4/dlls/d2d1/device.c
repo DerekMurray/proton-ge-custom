@@ -1882,7 +1882,13 @@ static void STDMETHODCALLTYPE d2d_device_context_PopLayer(ID2D1DeviceContext6 *i
     else
     {
         struct d2d_layer *layer = d2d_layer_stack_pop(&context->layer_stack);
+        D2D1_BITMAP_BRUSH_PROPERTIES1 bitmap_desc;
+        D2D1_BRUSH_PROPERTIES brush_desc;
+        ID2D1TransformedGeometry *geometry = NULL;
+        D2D1_MATRIX_3X2_F mask_transform, opacity_transform;
+        struct d2d_brush *brush = NULL;
         D2D1_RECT_F source;
+        HRESULT hr;
 
         if (!layer)
         {
@@ -1892,8 +1898,43 @@ static void STDMETHODCALLTYPE d2d_device_context_PopLayer(ID2D1DeviceContext6 *i
         source = (D2D1_RECT_F){0.0f, 0.0f, context->pixel_size.width, context->pixel_size.height};
         ID2D1DeviceContext6_SetTarget(iface, layer->previous_target);
         ID2D1DeviceContext6_SetTransform(iface, &identity);
-        ID2D1DeviceContext6_DrawBitmap(iface, (ID2D1Bitmap *)layer->offscreen_bitmap,
-                &source, layer->parameters.opacity, D2D1_INTERPOLATION_MODE_LINEAR, &source, NULL);
+        if (layer->parameters.geometricMask && layer->parameters.opacityBrush)
+        {
+            bitmap_desc.extendModeX = D2D1_EXTEND_MODE_CLAMP;
+            bitmap_desc.extendModeY = D2D1_EXTEND_MODE_CLAMP;
+            bitmap_desc.interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR;
+            brush_desc.opacity = layer->parameters.opacity;
+            brush_desc.transform = identity;
+
+            hr = d2d_bitmap_brush_create(context->factory, (ID2D1Bitmap *)layer->offscreen_bitmap,
+                    &bitmap_desc, &brush_desc, &brush);
+            mask_transform = layer->parameters.maskTransform;
+            d2d_matrix_multiply(&mask_transform, &layer->previous_transform);
+            if (SUCCEEDED(hr))
+                hr = ID2D1Factory_CreateTransformedGeometry(context->factory,
+                        layer->parameters.geometricMask, &mask_transform, &geometry);
+            if (SUCCEEDED(hr))
+            {
+                ID2D1Brush_GetTransform(layer->parameters.opacityBrush, &opacity_transform);
+                brush_desc.transform = opacity_transform;
+                d2d_matrix_multiply(&opacity_transform, &layer->previous_transform);
+                ID2D1Brush_SetTransform(layer->parameters.opacityBrush, &opacity_transform);
+                ID2D1DeviceContext6_FillGeometry(iface, (ID2D1Geometry *)geometry,
+                        &brush->ID2D1Brush_iface, layer->parameters.opacityBrush);
+                ID2D1Brush_SetTransform(layer->parameters.opacityBrush, &brush_desc.transform);
+            }
+            if (geometry)
+                ID2D1TransformedGeometry_Release(geometry);
+            if (brush)
+                ID2D1Brush_Release(&brush->ID2D1Brush_iface);
+            if (FAILED(hr))
+                d2d_device_context_set_error(context, hr);
+        }
+        else
+        {
+            ID2D1DeviceContext6_DrawBitmap(iface, (ID2D1Bitmap *)layer->offscreen_bitmap,
+                    &source, layer->parameters.opacity, D2D1_INTERPOLATION_MODE_LINEAR, &source, NULL);
+        }
         ID2D1DeviceContext6_SetTransform(iface, &layer->previous_transform);
         ID2D1Layer_Release(&layer->ID2D1Layer_iface);
     }

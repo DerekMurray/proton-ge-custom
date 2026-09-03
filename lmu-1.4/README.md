@@ -26,9 +26,8 @@ Base revisions:
 - Audio, the general HUD and MFD, Simagic input and FFB, Simsonn pedals and the
   external telemetry application have been tested.
 - The race-start and pit-release countdown colours render correctly.
-- The circular rev, brake and throttle rings remain fully filled because the
-  bitmap-target layer path does not yet apply their geometric and opacity
-  masks.
+- Circular rev, brake and throttle rings are composited through their
+  geometric and bitmap opacity masks.
 - Both 32-bit and 64-bit `d3dx9_36.dll` targets build successfully with warnings
   treated as errors.
 - The cursor workaround is included, but VR has not been tested locally because
