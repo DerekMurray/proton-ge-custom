@@ -15,7 +15,6 @@ Base revisions:
   1.4 online communication.
 - Direct2D Tint registration, bitmap fallback and colour handling.
 - Bitmap-target SpriteBatch execution, including colour and alpha.
-- Correct handling of the device-context transform and per-sprite RGBA colour.
 - Bitmap-target layers, per-target clip state and corrected compositor bounds.
 - Samuel Rounce's CUR/ICO in-memory texture-loading workaround, forward-ported
   to the GE-Proton11-6 Wine source. The original commit was

@@ -3136,7 +3136,7 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawSpriteBatch(ID2D1DeviceCont
     }
     else
     {
-        D2D1_MATRIX_3X2_F transform, previous_transform;
+        D2D1_MATRIX_3X2_F previous_transform;
         D2D1_RECT_F source_rect;
         unsigned int i;
 
@@ -3149,12 +3149,10 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawSpriteBatch(ID2D1DeviceCont
             source_rect.top = sprite->source.top;
             source_rect.right = sprite->source.right;
             source_rect.bottom = sprite->source.bottom;
-            transform = sprite->transform;
-            d2d_matrix_multiply(&transform, &previous_transform);
-            ID2D1DeviceContext6_SetTransform(iface, &transform);
+            ID2D1DeviceContext6_SetTransform(iface, &sprite->transform);
             context->target.bitmap->is_tinted = TRUE;
             context->target.bitmap->tint_colour = sprite->color;
-            ID2D1DeviceContext6_DrawBitmap(iface, bitmap, &sprite->dest, 1.0f,
+            ID2D1DeviceContext6_DrawBitmap(iface, bitmap, &sprite->dest, sprite->color.a,
                     interpolation_mode, &source_rect, NULL);
             context->target.bitmap->is_tinted = FALSE;
         }
