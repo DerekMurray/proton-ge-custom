@@ -16,6 +16,7 @@ Base revisions:
 - Direct2D Tint registration, bitmap fallback and colour handling.
 - Bitmap-target SpriteBatch execution, including colour and alpha.
 - Bitmap-target layers, per-target clip state and corrected compositor bounds.
+- LMU-specific Protonfix forcing the patched built-in `d3dx11_43.dll`.
 - Samuel Rounce's CUR/ICO in-memory texture-loading workaround, forward-ported
   to the GE-Proton11-6 Wine source. The original commit was
   `1e2c9c29611850c1887430ad7b65a1a3287dc7fc`.
@@ -28,7 +29,7 @@ Base revisions:
 - The race-start and pit-release countdown colours render correctly.
 - Circular rev, brake and throttle rings are composited through their
   geometric and bitmap opacity masks.
-- Both 32-bit and 64-bit `d3dx9_36.dll` targets build successfully with warnings
+- Both 32-bit and 64-bit `d3dx9_36.dll` and `d3dx11_43.dll` targets build successfully with warnings
   treated as errors.
 - The cursor workaround is included, but VR has not been tested locally because
   no suitable headset is available.
@@ -36,6 +37,7 @@ Base revisions:
 ## Layout
 
 - `dlls/d2d1/` contains the Direct2D overlay source.
+- `protonfixes/gamefixes-steam/2399420.py` forces the patched built-in D3DX11 loader.
 - `patches/lmu-bcrypt-secret-append.patch` contains the bcrypt changes.
 - `patches/lmu-vr-cursor.patch` contains the GE-Proton11-6 cursor forward port.
 - `patches/lmu-vr-cursor-original.patch` retains the original patch and
