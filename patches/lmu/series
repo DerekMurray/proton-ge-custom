@@ -3,3 +3,4 @@
 02-d2d1-complete.patch
 03-vr-cursor.patch
 04-d2d1-scope-and-lifetime.patch
+05-d3dx-bounds.patch
