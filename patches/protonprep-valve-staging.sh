@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Never continue to a build after a failed preparation step.
+set -e
+export LC_ALL=C
+
 # patch functions
 apply_patch() {
     local patch_path="$1"
@@ -14,6 +18,11 @@ apply_all_in_dir() {
 }
 
 ### (1) PREP SECTION ###
+
+    # xz's Git checkout omits generated autotools files required by the build.
+    if [[ ! -x xz/configure ]]; then
+        (cd xz && ./autogen.sh --no-po4a) || exit 1
+    fi
 
     # Wine-Mono is reset from its pinned release archive rather than a Git submodule.
     bash ./patches/wine-mono/prepare.sh || exit 1
@@ -49,6 +58,8 @@ apply_all_in_dir() {
     git clean -xdf
     echo "PROTONFIXES: add optiscaler support"
     apply_all_in_dir "../patches/protonfixes/"
+    echo "PROTONFIXES: add LMU-specific builtin d3dx11_43 override"
+    cp ../patches/lmu/2399420.py gamefixes-steam/2399420.py
     popd
 
     pushd wineopenxr
@@ -466,6 +477,9 @@ apply_all_in_dir() {
     for patch in ../patches/proton-ds5-haptic/*.patch; do
         apply_patch "$patch"
     done
+
+    echo "WINE: -LMU- apply online auth, Direct2D HUD, and CUR/ICO loader fixes"
+    bash ../patches/lmu/apply-series.sh
 
     echo "WINE: RUN AUTOCONF TOOLS/MAKE_REQUESTS"
     autoreconf -f
