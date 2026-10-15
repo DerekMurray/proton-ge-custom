@@ -4,3 +4,4 @@
 03-vr-cursor.patch
 04-d2d1-scope-and-lifetime.patch
 05-d3dx-bounds.patch
+06-dinput-hotplug.patch
